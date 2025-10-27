@@ -46,6 +46,24 @@
 //     // 下面这行会报错
 //     // println!("{:?}", user1);
 // }
+pub enum Coin {
+    Penny,
+    // Nickel,
+    // Dime,
+    // Quarter,
+}
+
+pub fn value_in_cents(coin: Coin) -> u8 {
+    match coin {
+        Coin::Penny => {
+            println!("Lucky penny!");
+            1
+        }
+        // Coin::Nickel => 5,
+        // Coin::Dime => 10,
+        // Coin::Quarter => 25,
+    }
+}
 
 pub fn test() {
     let test1: Vec<i32> = Vec::new();
