@@ -1,126 +1,99 @@
-// use std::str::FromStr;
+// mod my {
+//     pub struct Rectangle {
+//         width: u32,
+//         pub height: u32,
+//     }
 
-// fn get_count_item(s: &str) -> (u64, &str) {
-//     let mut it = s.split(' ');
-//     println!("it: {:?}", it);
-//     let (Some(count_str), Some(item)) = (it.next(), it.next()) else {
-//         panic!("Can't segment count item pair: '{s}'");
-//     };
-//     println!("count_str: '{count_str}', item: '{item}'");
-//     let Ok(count) = u64::from_str(count_str) else {
-//         panic!("Can't parse integer: '{count_str}'");
-//     };
-//     println!("count: {count}");
-//     // error: `else` clause of `let...else` does not diverge
-//     // let Ok(count) = u64::from_str(count_str) else { 0 };
-//     (count, item)
+//     impl Rectangle {
+//         pub fn new(width: u32, height: u32) -> Self {
+//             Rectangle { width, height }
+//         }
+//         pub fn width(&self) -> u32 {
+//             return self.width;
+//         }
+//         pub fn height(&self) -> u32 {
+//             return self.height;
+//         }
+//     }
 // }
 
 // fn main() {
-//     // assert_eq!(get_count_item("3 chairs"), (3, "chairs"));
-//     // let some_value: Option<i32> = None;
+//     let rect1 = my::Rectangle::new(30, 50);
 
-//     // // 使用 let-else 解构 Option
-//     // let Some(x) = some_value else {
-//     //     println!("值是 None，提前返回");
-//     //     return;
-//     // };
+//     println!("{}", rect1.width()); // OK
+//     println!("{}", rect1.height()); // OK
+//                                     // println!("{}", rect1.width); // Error - the visibility of field defaults to private
+//     println!("{}", rect1.height); // OK
+// }
 
-//     // println!("解构成功: x = {}", x); // 如果 some_value 是 None，这行不会执行
+// struct Point<T, U> {
+//     x: T,
+//     y: U,
+// }
 
-//     let x = Some(5);
-//     let y = 10;
-
-//     match x {
-//         Some(50) => println!("Got 50"),
-//         Some(y) => println!("Matched, y = {:?}", y),
-//         _ => println!("Default case, x = {:?}", x),
+// impl<T, U> Point<T, U> {
+//     fn mixup<V, W>(self, other: Point<V, W>) -> Point<T, W> {
+//         Point {
+//             x: self.x,
+//             y: other.y,
+//         }
 //     }
-
-//     println!("at the end: x = {:?}, y = {:?}", x, y);
 // }
 
-// struct Point {
-//     x: i32,
-//     y: i32,
+// fn main() {
+//     let p1: Point<i32, f64> = Point { x: 5, y: 10.4 };
+//     let p2: Point<&str, char> = Point {
+//         x: "Hello",
+//         y: '中',
+//     };
+
+//     let p3: Point<i32, char> = p1.mixup(p2);
+
+//     println!("p3.x = {}, p3.y = {}", p3.x, p3.y);
+
+//     const MAX_POINTS: u32 = 100_000;
+//     println!("The maximum points is: {}", MAX_POINTS);
 // }
 
-// #[derive(Debug, PartialEq)]
-// enum Test {
-//     A,
-// }
+pub trait Summary {
+    fn summarize(&self) -> String;
+}
+pub struct Post {
+    pub title: String,   // 标题
+    pub author: String,  // 作者
+    pub content: String, // 内容
+}
+
+impl Summary for Post {
+    fn summarize(&self) -> String {
+        format!("文章{}, 作者是{}", self.title, self.author)
+    }
+}
 
 #[derive(Debug)]
-struct Point {
-    x: i32,
-    y: i32,
+pub struct Weibo {
+    pub username: String,
+    pub content: String,
+}
+
+impl Summary for Weibo {
+    fn summarize(&self) -> String {
+        format!("{}发表了微博{}", self.username, self.content)
+    }
 }
 
 fn main() {
-    // let p = Point { x: 0, y: 7 };
+    let post = Post {
+        title: "Rust语言简介".to_string(),
+        author: "Sunface".to_string(),
+        content: "Rust棒极了!".to_string(),
+    };
+    let weibo = Weibo {
+        username: "sunface".to_string(),
+        content: "好像微博没Tweet好用".to_string(),
+    };
 
-    // let Point { x, y } = p;
-    // assert_eq!(0, x);
-    // assert_eq!(7, y);
-
-    // let test = Test::A;
-    // match test {
-    //     Test::A => println!("A"),
-    // }
-    // assert_eq!(test, Test::A);
-    // println!("test matched");
-
-    // let arr: &[u16] = &[114, 514];
-
-    // if let [x, ..] = arr {
-    //     assert_eq!(x, &114);
-    // }
-
-    // if let &[.., y] = arr {
-    //     assert_eq!(y, 514);
-    // }
-
-    // let arr: &[u16] = &[];
-
-    // assert!(matches!(arr, [..]));
-    // assert!(!matches!(arr, [x, ..]));
-    // println!("arr matched");
-    let x = 4;
-    let y = false;
-
-    match x {
-        4 | 5 | 6 if y => println!("yes"),
-        _ => println!("no"),
-    }
-
-    enum Message {
-        Hello { id: i32 },
-    }
-
-    let msg = Message::Hello { id: 55 };
-
-    match msg {
-        Message::Hello {
-            id: id_variable @ 3..=7,
-        } => {
-            println!("Found an id in range: {}", id_variable)
-        }
-        Message::Hello { id: 10..=12 } => {
-            println!("Found an id in another range")
-        }
-        Message::Hello { id } => {
-            println!("Found some other id: {}", id)
-        }
-    }
-    // 绑定新变量 `p`，同时对 `Point` 进行解构
-    let p @ Point { x: px, y: py } = Point { x: 10, y: 23 };
-    println!("x: {}, y: {}", px, py);
-    println!("{:?}", p);
-
-    let point = Point { x: 10, y: 5 };
-    if let p @ Point { x: 10, y } = point {
-        println!("x is 10 and y is {} in {:?}", y, p);
-    } else {
-        println!("x was not 10 :(");
-    }
+    println!("{}", post.summarize());
+    println!("{}", weibo.summarize());
+    println!("{:#?}", weibo);
 }
